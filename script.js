@@ -1,21 +1,24 @@
 
-function Board(cells) {
+Board.prototype = {
+	players: [1, 2, 5]
+}
+
+function Board(cells, player) {
 	this.cells = cells;
-	this.terminal = false;
-	this.len = this.cells.length;
+	this.player = player;
 
-	/* scans the whole board for any kind of line.
-	   returns an object representing the first line 
+	/* scan the whole board for any kind of line,
+	   return an object representing the first line 
 	   if any, or false if none */ 
-	this.checkLine = function(value) {
+	this.checkLine = function() {
 
-		/*checks for diagonal lines, 
-		  if (fwd) checks for forward diagonal line, 
-		  else, checks for backwards diagonal */
+		/*check for diagonal lines, 
+		  if (fwd) check for forward diagonal line, 
+		  else, check for backwards diagonal */
 		this.checkDiagonal = function(fwd, val) {
 			var tempCells = fwd ? 
 				this.cells.slice().reverse() : this.cells;
-			for(var i = 0; i < this.len; i++) {
+			for(var i = 0; i < this.cells.length; i++) {
 				if(tempCells[i][i] != val) {
 					return false;
 				}
@@ -24,9 +27,9 @@ function Board(cells) {
 			return true;
 		}
 
-		//ckecks for orthogonal lines (vertical or horizontal)
+		//ckeck for orthogonal lines (vertical or horizontal)
 		this.checkOrthogonal = function(pos, val, vertical) {
-			for(var i = 0; i < this.len; i++) {
+			for(var i = 0; i < this.cells.length; i++) {
 				var cell = vertical ? 
 					this.cells[i][pos] :
 					this.cells[pos][i]
@@ -38,44 +41,50 @@ function Board(cells) {
 			return true;
 		}
 
-		var res = {};
-		res.value = value;
+		//loop through players and chek for a win
+		for(var j = 0; j < this.players.length; j++) {
+			var res = {};
+			var value = this.players[j];
+			res.win = (value == this.player);
 
-		//Diagonals
-		if(this.checkDiagonal(1, value)) {
-			res.orientation = "diagonal";
-			res.position = 1;
-			return res;
-		}
-		if(this.checkDiagonal(0, value)) {
-			res.orientation = "diagonal";
-			res.position = 0;
-			return res;
-		}
-
-		//Orthogonals
-		for(var i = 0; i < this.len; i++){
-			//Vertical
-			if(this.checkOrthogonal(i, value, true)) {
-				res.orientation = "vertical";
-				res.position = i;
+			//Diagonals
+			if(this.checkDiagonal(1, value)) {
+				res.orientation = "diagonal";
+				res.position = 1;
 				return res;
 			}
-			//Horizontal
-			if(this.checkOrthogonal(i, value, false)) {
-				res.orientation = "horizontal";
-				res.position = i;
+			if(this.checkDiagonal(0, value)) {
+				res.orientation = "diagonal";
+				res.position = 0;
 				return res;
 			}
+
+			//Orthogonals
+			for(var i = 0; i < this.cells.length; i++){
+				//Vertical
+				if(this.checkOrthogonal(i, value, true)) {
+					res.orientation = "vertical";
+					res.position = i;
+					return res;
+				}
+				//Horizontal
+				if(this.checkOrthogonal(i, value, false)) {
+					res.orientation = "horizontal";
+					res.position = i;
+					return res;
+				}
+			}
 		}
+		//return false if no line was found
 		return false;
 	}
+	this.terminal = this.checkLine();
 }
 
-var cells = [   [0, 6, 5],
-				[0, 5, 1],
-				[5, 6, 0]   ];
+var cells = [   [1, 0, 0],
+				[1, 1, 1],
+				[0, 2, 2]   ];
 
-var test = new Board(cells);
-console.log(test.checkLine(6));
-console.log("Borad.terminal = " + test.terminal);
+var test = new Board(cells, 2);
+console.log("Borad.terminal: ");
+console.log(test.terminal);
