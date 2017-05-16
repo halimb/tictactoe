@@ -1,3 +1,31 @@
 body {
-	background-color: #BADA55;
+	background-color: #F9F9F9;
+}
+
+.cell {
+	cursor: pointer;
+	border: .45vw solid #303030;
+	float: left;
+	height: 14vw;
+	width: 14vw;
+	background-color: #F9F9F9;
+}
+
+.board {
+	position: absolute;
+	width: 45vw;
+	height: 45vw;
+	margin: auto;
+	top: 0; right: 0;
+	left: 0; bottom: 0;
+	clip-path: inset(2vw);
+}       
+
+img {
+	position: absolute;
+	margin: 2vw;
+	height: 10vw;
+	width: 10vw;
+	visibility: hidden;
+	pointer-events: none;
 }
