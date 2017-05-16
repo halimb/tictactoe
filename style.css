@@ -29,3 +29,9 @@ img {
 	visibility: hidden;
 	pointer-events: none;
 }
+
+.unselectable {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}

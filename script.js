@@ -221,9 +221,9 @@ function init() {
 	}
 	document.getElementById("board").innerHTML = board;
 
-	cells = [   [-1, 0, 1],
-				[0, 1, 0],
-				[1, 0, -1]   ];
+	cells = [   [0, 0, 0],
+				[0, 0, 0],
+				[0, 0, 0]   ];
 }
 
 document.addEventListener('click', handleClick);
@@ -236,19 +236,15 @@ function handleClick(e, right) {
 	if(Number.isInteger(id)) {
 		
 		var cross = e.button;
-		var active = e.button ? "cross" : "circle";
+		var active = e.button == 0 ? "cross" : "circle";
 		var hidden = active == "cross" ? "circle" : "cross";
 		
 		var activeImg = document.getElementById(active + id);
 		var hiddenImg = document.getElementById(hidden + id);
 		
-		activeImg.style.visibility =
-		 (activeImg.style.visibility == "visible") ?
-		  "hidden" : "visible";
+		activeImg.style.visibility = "visible"
 		
-		hiddenImg.style.visibility =
-		 (hiddenImg.style.visibility == "hidden") ?
-		  "visible" : "hidden";
+		hiddenImg.style.visibility = "hidden"
 		
 		cells = updateBoard(cells, id, (cross ? "-1" : "1"));
 		printBoard(cells);
@@ -259,8 +255,8 @@ function handleClick(e, right) {
 	}
 }
 
-function updateBoard(cells, id, value) {
-	cells[Math.floor(id / 3)][id % 3] = 1;
+function updateBoard(cells, id, val) {
+	cells[Math.floor(id / 3)][id % 3] = val;
 	return cells;
 }
 
@@ -296,4 +292,4 @@ function displayBoard(board) {
 
 
 init();
-displayBoard(cells);
+//displayBoard(cells);
