@@ -4,6 +4,7 @@ const MINI = -1;
 const TIE = 0;
 var cells;
 
+var n = 0;
 
 Board.prototype = {
 	players: [MAXI, MINI],
@@ -135,17 +136,24 @@ function nextMove(board) {
 	var	pl = board.player;
 	var moves = board.possibleMoves;
 	var values = [];
-	for(var i = 0; i < moves.length; i++) {
-		var b = new Board(moves[i], pl);
-		values.push(minimax(b));
+	var index;
+	if(moves.length > 7) {
+		index = Math.floor(Math.random() * 9);
 	}
-	var best = (pl == MAXI) ? 
-		Math.max(...values) : Math.min(...values);
-	// console.log("Math.max(values) = " + Math.max(...values));
-	// console.log("Math.min(values) = " + Math.min(...values));
-	var index = values.indexOf(best);
-	// console.log("best = " + best);
-	// console.log("index = " + index);
+	else{
+		for(var i = 0; i < moves.length; i++) {
+			var b = new Board(moves[i], pl);
+			values.push(minimax(b));
+		}
+		var best = (pl == MAXI) ? 
+			Math.max(...values) : Math.min(...values);
+		// console.log("Math.max(values) = " + Math.max(...values));
+		// console.log("Math.min(values) = " + Math.min(...values));
+		index = values.indexOf(best);
+		// console.log("best = " + best);
+		// console.log("index = " + index);
+	}
+	displayBoard(moves[index]);
 	return moves[index]; 
 }
  /*
@@ -247,7 +255,7 @@ function handleClick(e, right) {
 		hiddenImg.style.visibility = "hidden"
 		
 		cells = updateBoard(cells, id, (cross ? "-1" : "1"));
-		printBoard(cells);
+		cells = nextMove( new Board(cells, -1));
 	}
 
 	else {
@@ -288,6 +296,7 @@ function displayBoard(board) {
 			circle.style.visibility = circleVis;
 		}
 	}
+	printBoard(board);
 }
 
 
