@@ -2,7 +2,7 @@ const NT = "nonterminal";
 const MAXI = 1;
 const MINI = -1;
 const TIE = 0;
-var cells;
+var cells = [];
 
 var n = 0;
 
@@ -19,7 +19,7 @@ Board.prototype = {
 		  if (fwd) check for forward diagonal line, 
 		  else, check for backwards diagonal */
 		var checkDiagonal = function(fwd, v) {
-			var found = true;
+			var found = v;
 			var tempCells = fwd ? 
 				cells.slice().reverse() : cells;
 			for(var i = 0; i < cells.length; i++) {
@@ -40,11 +40,11 @@ Board.prototype = {
 							var cell = vertical ? 
 							cells[i][pos] :
 							cells[pos][i]
-							if(cell != val) {
+							if(cell != v) {
 								return false;
 							}
 						}
-						return true;
+						return v;
 					}
 				)();
 				if(found) {
@@ -105,28 +105,29 @@ Board.prototype = {
 function Board(cells, player) {
 	this.cells = cells;
 	this.player = player;
-	this.terminal = this.checkState(cells);
+	this.terminal = this.checkState(this.cells);
 	this.possibleMoves = (this.terminal != NT)? 
-			[] : this.getMoves(cells, player);
+			[] : this.getMoves(this.cells, player);
 }
 
 function minimax(board) {
 	if(board.terminal != NT) {
 		res = board.terminal;
-		if(res == TIE) {
-			res = board.player * -1 ;
-		}
+		// if(res == TIE) {
+		// 	res = board.player;
+		// }
 		return res;
 	}
 	else{
 		var pl = board.player;
 		var moves = board.possibleMoves;
-		var next = pl * -1;
-		var bestVal = (pl == MAXI) ? -1 : 1;
+		var next = (pl == MAXI) ? MINI : MAXI;
+		var bestVal = (pl == MAXI) ? -1000 : 1000;
 		var best = (pl == MAXI) ? Math.max : Math.min;
 		for(var i = 0; i < moves.length; i++) {
-			var newBoard = new Board(moves[i], next);
-			bestVal += best(bestVal, minimax(newBoard));
+			var newBoard = new Board(moves[i], pl);
+			var mm = minimax(newBoard);
+			bestVal = best(bestVal, mm);
 		}
 		return bestVal;
 	}
@@ -141,70 +142,24 @@ function nextMove(board) {
 		index = Math.floor(Math.random() * 9);
 	}
 	else{
+		console.log("\n\n");
+
 		for(var i = 0; i < moves.length; i++) {
 			var b = new Board(moves[i], pl);
-			values.push(minimax(b));
+			var mm = minimax(b);
+			values.push(mm);
+			console.log("minimax : " + mm +" for state : ");
+			printBoard(moves[i]);
 		}
 		var best = (pl == MAXI) ? 
 			Math.max(...values) : Math.min(...values);
-		// console.log("Math.max(values) = " + Math.max(...values));
-		// console.log("Math.min(values) = " + Math.min(...values));
 		index = values.indexOf(best);
-		// console.log("best = " + best);
-		// console.log("index = " + index);
 	}
 	displayBoard(moves[index]);
 	return moves[index]; 
 }
- /*
 
-//TESTING
-var cells = [   [0, 0, 0],
-				[0, 0, 0],
-				[0, 0, 0]   ];
 
-var testCases = []
-for(var i = 0; i < 9; i++) {
-	var temp = cells.map(function(arr){
-						return arr.slice();
-					});
-	temp[Math.floor(i / 3)][i % 3] = 1;
-	testCases.push(temp);
-}
-for(var i = 0; i < testCases.length; i++) {
-	var board = new Board(testCases[i], -1);
-	console.log("< < < < < TEST CASE : ");
-	printBoard(board.cells);
-	console.log("> > > > >\n")
-	while(board.terminal == NT) {
-		console.log("nextMove(board): ");
-		var nextM = nextMove(board);
-		printBoard(nextM);
-		var nextPl = board.player == MAXI ? MINI : MAXI;
-		board = new Board(nextM, nextPl);
-	}
-	console.log("\n\n\n");
-}
-/*
-for(var b = 0; b < 30; b++) {
-	var grid = []
-	for(var i = 0; i < 3; i++) {
-		var row = []
-		for(var j = 0; j < 3; j++) {
-			var val = Math.round(Math.sin(2 * Math.random() * Math.PI));
-			row.push(val);
-		}
-		grid.push(row);
-	}
-	var board = new Board(grid, 1);
-	console.log("< <")
-	printBoard(grid);
-	console.log("minimax(board): ");
-	console.log(minimax(board));
-	console.log(" > > \n\n")
-
-}
-*/
 function printBoard(board) {
 	var res = "";
 	for(var i = 0; i < 3; i++) {
@@ -240,26 +195,29 @@ document.addEventListener("contextmenu",
 	function(ev) {handleClick(ev, true); return false;})
 	
 function handleClick(e, right) {
-	var id = parseInt(e.target.id);
-	if(Number.isInteger(id)) {
-		
-		var cross = e.button;
-		var active = e.button == 0 ? "cross" : "circle";
-		var hidden = active == "cross" ? "circle" : "cross";
-		
-		var activeImg = document.getElementById(active + id);
-		var hiddenImg = document.getElementById(hidden + id);
-		
-		activeImg.style.visibility = "visible"
-		
-		hiddenImg.style.visibility = "hidden"
-		
-		cells = updateBoard(cells, id, (cross ? "-1" : "1"));
-		cells = nextMove( new Board(cells, -1));
-	}
+	if(cells.length > 0) {
+		var id = parseInt(e.target.id);
+		if(Number.isInteger(id)) {
+			
+			/*var cross = e.button;/*
+			var active = e.button == 0 ? "cross" : "circle";
+			var hidden = active == "cross" ? "circle" : "cross";
+			
+			var activeImg = document.getElementById(active + id);
+			var hiddenImg = document.getElementById(hidden + id);
+			
+			activeImg.style.visibility = "visible"
+			
+			hiddenImg.style.visibility = "hidden"*/
+			cells = updateBoard(cells, id, 1);
+			// displayBoard(cells)
+			// console.log(new Board(cells, -1).terminal)
+			cells = nextMove( new Board(cells, -1));
+		}
 
-	else {
-		console.log("the target isn't a cell !")
+		else {
+			console.log("the target isn't a cell !")
+		}
 	}
 }
 
@@ -296,7 +254,6 @@ function displayBoard(board) {
 			circle.style.visibility = circleVis;
 		}
 	}
-	printBoard(board);
 }
 
 
