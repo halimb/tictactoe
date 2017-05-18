@@ -4,8 +4,6 @@ const MINI = -1;
 const TIE = 0;
 var cells = [];
 
-var n = 0;
-
 Board.prototype = {
 	players: [MAXI, MINI],
 	/* scan the whole board for any kind of line,
@@ -83,14 +81,21 @@ Board.prototype = {
 			}
 		}
 		return res;
-	},
+	}
+}
 
-	getMoves: function(cells, player) {
-		var res = [];
-		for(var i = 0; i < cells.length; i++) {
-			for(var j = 0; j < cells[i].length; j++) {
-				if(cells[i][j] == 0) {
-					var temp = cells.map(function(arr){
+function Board(cells) {
+	this.cells = cells;
+	this.terminal = this.checkState(this.cells);
+}
+
+function getMoves(board, player) {
+	var res = [];
+	if(board.terminal == NT) {
+		for(var i = 0; i < board.cells.length; i++) {
+			for(var j = 0; j < board.cells[i].length; j++) {
+				if(board.cells[i][j] == 0) {
+					var temp = board.cells.map(function(arr){
 						return arr.slice();
 					});
 					temp[i][j] = player;
@@ -98,64 +103,61 @@ Board.prototype = {
 				}
 			}
 		}
-		return res;
 	}
+	return res;
 }
 
-function Board(cells, player) {
-	this.cells = cells;
-	this.player = player;
-	this.terminal = this.checkState(this.cells);
-	this.possibleMoves = (this.terminal != NT)? 
-			[] : this.getMoves(this.cells, player);
-}
-
-function minimax(board) {
+var n = 0;
+function minimax(board, player) {
+	n++;
 	if(board.terminal != NT) {
 		res = board.terminal;
-		// if(res == TIE) {
-		// 	res = board.player;
-		// }
 		return res;
 	}
 	else{
-		var pl = board.player;
-		var moves = board.possibleMoves;
-		var next = (pl == MAXI) ? MINI : MAXI;
-		var bestVal = (pl == MAXI) ? -1000 : 1000;
-		var best = (pl == MAXI) ? Math.max : Math.min;
+		var moves = getMoves(board, player);
+		var next = (player == MAXI) ? MINI : MAXI;
+		var bestVal = (player == MAXI) ? -1000 : 1000;
+		var best = (player == MAXI) ? Math.max : Math.min;
+
 		for(var i = 0; i < moves.length; i++) {
-			var newBoard = new Board(moves[i], pl);
-			var mm = minimax(newBoard);
+			var newBoard = new Board(moves[i]);
+			var mm = minimax(newBoard, next);
 			bestVal = best(bestVal, mm);
 		}
+
 		return bestVal;
 	}
 }
 
-function nextMove(board) {
-	var	pl = board.player;
-	var moves = board.possibleMoves;
+function nextMove(board, player) {
+	var	pl = player;
+	var next = pl * -1;
+	var moves = getMoves(board, player);
 	var values = [];
 	var index;
+
+	/* heuristic: on the first move,
+	 pick the center cell if empty, 
+	 if not, pick the first empry cell */
 	if(moves.length > 7) {
-		index = Math.floor(Math.random() * 9);
+		if(board.cells[1][1] != 0){
+			index = 0;
+		}
+		else{
+			return updateBoard(board.cells, 4, player);
+		}
 	}
 	else{
-		console.log("\n\n");
-
 		for(var i = 0; i < moves.length; i++) {
-			var b = new Board(moves[i], pl);
-			var mm = minimax(b);
+			var b = new Board(moves[i]);
+			var mm = minimax(b, next);
 			values.push(mm);
-			console.log("minimax : " + mm +" for state : ");
-			printBoard(moves[i]);
 		}
 		var best = (pl == MAXI) ? 
 			Math.max(...values) : Math.min(...values);
 		index = values.indexOf(best);
 	}
-	displayBoard(moves[index]);
 	return moves[index]; 
 }
 
@@ -198,21 +200,19 @@ function handleClick(e, right) {
 	if(cells.length > 0) {
 		var id = parseInt(e.target.id);
 		if(Number.isInteger(id)) {
-			
-			/*var cross = e.button;/*
-			var active = e.button == 0 ? "cross" : "circle";
-			var hidden = active == "cross" ? "circle" : "cross";
-			
-			var activeImg = document.getElementById(active + id);
-			var hiddenImg = document.getElementById(hidden + id);
-			
-			activeImg.style.visibility = "visible"
-			
-			hiddenImg.style.visibility = "hidden"*/
 			cells = updateBoard(cells, id, 1);
-			// displayBoard(cells)
-			// console.log(new Board(cells, -1).terminal)
-			cells = nextMove( new Board(cells, -1));
+			cells = nextMove( new Board(cells), -1);
+			displayBoard(cells);
+			console.log(n);
+			n = 0;
+			board = new Board(cells, -1)
+			if(board.terminal != NT) {
+				console.log(
+						(board.terminal == TIE) ? 
+						"Tie !" : (board.terminal == MAXI) ? 
+								"Crosses win !" : "Circles win !"
+								);
+			}
 		}
 
 		else {
@@ -221,9 +221,9 @@ function handleClick(e, right) {
 	}
 }
 
-function updateBoard(cells, id, val) {
-	cells[Math.floor(id / 3)][id % 3] = val;
-	return cells;
+function updateBoard(board, id, val) {
+	board[Math.floor(id / 3)][id % 3] = val;
+	return board;
 }
 
 function displayBoard(board) {
