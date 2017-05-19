@@ -37,6 +37,7 @@ img {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+<<<<<<< HEAD
 }
 
 @media screen and (max-width: 500px) {
@@ -58,4 +59,24 @@ img {
 		width: 10vw;
 	}
 	
+}
+
+@media screen and (max-width: 500px) {
+
+	.cell {
+		border: .45vw solid #303030;
+		height: 14vw;
+		width: 14vw;
+	}
+
+	.board {
+		height: 45vw;
+		width: 45vw;
+		clip-path: inset(2vw);
+	}
+
+	img {
+		height: 10vw;
+		width: 10vw;
+	}
 }
