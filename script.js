@@ -2,17 +2,34 @@ var boardDiv = document.getElementById("board");
 //Board dimension
 const dim = 3;
 
+const HORIZONTAL = 0;
+const VERTICAL = 1;
+const DIAGONAL = 2;
+const BACKWARD = 0;
+const FORWARD = 1;
+
+var orientation, position, terminal;
 const NT = "nonterminal";
 const MAXI = 1;
 const MINI = -1;
 const TIE = 0;
-var cells;
-
+var user = 1;
+var cells = [];
+var divRefs = [];
+var crossRefs = [];
+var circleRefs = [];
 
 var players = [MAXI, MINI];
+
+document.addEventListener('click', handleClick);
+document.getElementById("reset").onclick = initGame;
+document.getElementById("crosses").onclick = function() { user = MAXI; initGame();}
+document.getElementById("circles").onclick = function() { user = MINI; initGame();}	
+
+
 /* scan the whole board for any kind of line,
-   return an object representing the first line 
-   if any, or false if none */ 
+   return the player value if a line is found,
+   TIE if tie, else : "nonterminal" */ 
 function checkState(board) {
 
 	var res = NT;
@@ -29,17 +46,22 @@ function checkState(board) {
 				found = false;
 			}
 		}
+		if(found) {
+			orientation = DIAGONAL;
+			position = fwd;
+		}
 		return found;
 	}
 
 	//ckeck for orthogonal lines (vertical or horizontal)
-	var checkOrthogonal = function(v, vertical) {
+	var checkOrthogonal = function(v, orient) {
 		var found = false;
 		for(var pos = 0; pos < board.length; pos++) {
+
 			found = (
 				function() {
 					for(var i = 0; i < board.length; i++) {
-						var cell = vertical ? 
+						var cell = orient ? 
 						board[i][pos] :
 						board[pos][i]
 						if(cell != v) {
@@ -48,10 +70,13 @@ function checkState(board) {
 					}
 					return v;
 				}
-			)();
+			) ();
 			if(found) {
+				orientation = orient;
+				position = pos;
 				break;
 			}
+
 		}
 		return found;
 	}
@@ -60,10 +85,10 @@ function checkState(board) {
 	for(var j = 0; j < this.players.length; j++) {
 		var val = this.players[j];
 		//Line
-		if(	checkOrthogonal(val, 0) ||
-			checkOrthogonal(val, 1) ||
-			checkDiagonal(1, val)   ||
-			checkDiagonal(0, val)    ) {
+		if(	checkOrthogonal(val, HORIZONTAL) ||
+			checkOrthogonal(val, VERTICAL) ||
+			checkDiagonal(FORWARD, val)   ||
+			checkDiagonal(BACKWARD, val)    ) {
 			res = val;
 			break;
 		}
@@ -91,24 +116,19 @@ function checkState(board) {
 
 function getMoves(board, player) {
 	var res = [];
-	var state = checkState(board);
-	if(state == NT) {
-		for(var i = 0; i < board.length; i++) {
-			for(var j = 0; j < board[i].length; j++) {
-				if(board[i][j] == 0) {
-					var temp = board.map(function(arr){
-						return arr.slice();
-					});
-					temp[i][j] = player;
-					res.push(temp);
-				}
+	for(var i = 0; i < board.length; i++) {
+		for(var j = 0; j < board[i].length; j++) {
+			if(board[i][j] == 0) {
+				var temp = board.map(function(arr){
+					return arr.slice();
+				});
+				temp[i][j] = player;
+				res.push(temp);
 			}
 		}
 	}
 	return res;
 }
-
-var n = 0;
 
 function minimax(board, player) {
 	var state = checkState(board);
@@ -132,40 +152,66 @@ function minimax(board, player) {
 }
 
 function nextMove(board, player) {
+
+	var moves = getMoves(board, player);
 	var	pl = player;
 	var next = pl * -1;
-	var moves = getMoves(board, player);
 	var values = [];
+	var res = [];
 	var index;
 
-	/* heuristic: on the first move,
-	 pick the center cell if empty, 
-	 if not, pick the first empry cell */
-	if(moves.length > 7) {
-		var cX = (dim - 1) / 2;
-		var cY =  (dim - 1) / 2;
-		if(dim % 2 != 0 && board[cX][cY] == 0){
-			var centerIndex = (dim * dim - 1) / 2
-			return updateBoard(board, centerIndex, player);
+	if(moves.length > 0) {
+		/* heuristic: on the first move,
+		 pick the center cell if empty, 
+		 if not, pick the first empry cell */ 	
+		if(moves.length > 7) {
+			var cX = (dim - 1) / 2;
+			var cY =  (dim - 1) / 2;
+			if(dim % 2 != 0 && board[cX][cY] == 0){
+				var centerIndex = (dim * dim - 1) / 2
+				return updateBoard(board, centerIndex, player);
+			}
+			else{
+				index = 0;
+			}
 		}
+
 		else{
-			index = 0;
+			for(var i = 0; i < moves.length; i++) {
+				var b = moves[i];
+				var mm = minimax(b, next);
+				values.push(mm);
+			}
+			var best = (pl == MAXI) ? 
+				Math.max(...values) : Math.min(...values);
+			index = values.indexOf(best);
 		}
+		res = moves[index];
+	}
+	else {
+		res = board;
 	}
 
-	else{
-		for(var i = 0; i < moves.length; i++) {
-			var b = moves[i];
-			var mm = minimax(b, next);
-			values.push(mm);
-		}
-		var best = (pl == MAXI) ? 
-			Math.max(...values) : Math.min(...values);
-		index = values.indexOf(best);
+	if(checkState(res) != NT) {
+		terminal = true;
 	}
-	return moves[index]; 
+
+	return res; 
 }
 
+function displayTerminal(state) {
+	if(state != TIE) {
+
+	}
+}
+
+function displayOrtho(pos, orient) {
+	for(var i = 0; i < cells.length; i++) {
+		var cell = orient ? 
+		cells[i][pos] :
+		cells[pos][i]
+	}
+}
 
 function printBoard(board) {
 	var res = "";
@@ -178,23 +224,47 @@ function printBoard(board) {
 	console.log(res);
 }
 
+function markCell(row, col) {
+	var id = row * dim + col;
+	var img = document.getElementById("cross"+id)
+	//refs[id].style.opacity = 1;
+	img.style.opacity = 1;
+}
+
 function init() {
 	var board = '';
 	boardDiv.innerHTML = '';
+
+	//populate the board with svgs
 	for(var i = 0; i < dim * dim; i++) {
 		var crossImg = '<img id="cross' + i + 
-		'" src="crosses/cross' + (i + 1) + '.svg" />';
+		'" src="crosses/cross' + /*(i + 1) + */'.svg" />';
 		var circleImg = '<img id="circle' + i + 
-		'" src="circles/circle' + (i + 1) + '.svg" />'
+		'" src="circles/circle' + /*(i + 1) + */'.svg" />'
 		var cell = '<div class="cell" id="' + i + '">' + 
 		crossImg + circleImg + '</div>';
 		board += cell;
 	}
 	boardDiv.innerHTML = board;
 
+	// get references to cell divs
+	for(var i = 0; i < dim * dim; i++) {
+		var cell = document.getElementById(i);
+		var cross = document.getElementById("cross" + i);
+		var circle = document.getElementById("circle" + i)
+		divRefs.push(cell);
+		crossRefs.push(cross);
+		circleRefs.push(circle);
+	}
 
-	//populate the initial board
+	initGame();
+}
+
+function initGame() {
+	playing = true;
+	terminal = false;
 	cells = [];
+	//populate the initial board
 	for(var i = 0; i < dim; i++) {
 		var row = [];
 		for(var j = 0; j < dim; j++) {
@@ -202,39 +272,35 @@ function init() {
 		}
 		cells.push(row);
 	}
-	playing = true;
-	printBoard(cells)}
 
-document.addEventListener('click', handleClick);
+	//make the first move if the computer plays crosses
+	if(user == MINI) {
+		cells = nextMove(cells, MAXI);
+	}
 
-document.addEventListener("contextmenu", 
-	function(ev) {handleClick(ev, true); return false;})
+	displayBoard(cells);
+}
 
-document.getElementById("reset").onclick = init;
-	
 function handleClick(e, right) {
-	if(cells.length > 0) {
+	if(playing) {
 		var id = parseInt(e.target.id);
-		if(playing && Number.isInteger(id)) {
-			cells = updateBoard(cells, id, 1);
-			cells = nextMove(cells, -1);
-			displayBoard(cells);
-			console.log(n);
-			n = 0;
-			printBoard(cells);
+		if(Number.isInteger(id)) {
+
+			var row = Math.floor(id / dim);
+			var col = id % dim;
+
+			if(cells[row][col] == 0) {
+				markCell(row, col);
+				cells = updateBoard(cells, id, user);
+				cells = nextMove(cells, user * -1);
+				displayBoard(cells);
+			}
+
 			var state = checkState(cells);
-			if(state != NT) {
-				console.log(
-						(state == TIE) ? 
-						"Tie !" : (state == MAXI) ? 
-								"Crosses win !" : "Circles win !"
-							);
+			if(terminal) {
+				console.log("TERMINAL");
 				playing = false;
 			}
-		}
-
-		else {
-			console.log("the target isn't a cell !")
 		}
 	}
 }
@@ -250,28 +316,35 @@ function displayBoard(board) {
 	for(var i = 0; i < board.length; i++) {
 		for(var j = 0; j < board[i].length; j++) {
 			var id = i * dim + j;
-			var cross = document.getElementById("cross" + id);
-			var circle = document.getElementById("circle" + id);
-			var crossVis, circleVis;
-			switch(board[i][j]) {
-				case 0:
-					crossVis = "hidden";
-					circleVis = "hidden";
-					break;
-				case 1:
-					crossVis = "visible";
-					circleVis = "hidden";
-					break;
-				case -1: 
-					crossVis = "hidden";
-					circleVis = "visible";
-					break;
-				default:
-					console.warn("illegal board value : " + board[i][j]);
-					break;
-			}
-			cross.style.visibility = crossVis;
-			circle.style.visibility = circleVis;
+			var cross = crossRefs[id];
+			var circle = circleRefs[id];
+			var val = board[i][j];
+			cross.style.opacity = val;
+			circle.style.opacity = val * -1;
+			// var crossVis, circleVis;
+			// switch(board[i][j]) {
+			// 	case 0:
+			// 		cross.style.opacity = 0;
+			// 		circle.style.opacity = 0;
+			// 		break;
+			// 	case 1:
+			// 		// crossVis = "visible";
+			// 		// circleVis = "hidden";
+			// 		cross.style.opacity = 1;
+			// 		circle.style.opacity = 0;
+			// 		break;
+			// 	case -1: 
+			// 		// crossVis = "hidden";
+			// 		// circleVis = "visible";
+			// 		cross.style.opacity = 0;
+			// 		circle.style.opacity = 1;
+			// 		break;
+			// 	default:
+			// 		console.warn("illegal board value : " + board[i][j]);
+			// 		break;
+			// }
+			// cross.style.visibility = crossVis;
+			// circle.style.visibility = circleVis;
 		}
 	}
 }
