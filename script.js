@@ -322,12 +322,7 @@ function displayBoard(board) {
 
 	function animate(paths) {
 		for(var i = 0; i < paths.length; i++) {
-			if(paths[i].id == "circle") {
-				paths[i].style.animation = "crcl .6s ease forwards";
-			}
-			else{
-				paths[i].style.animation = "draw .35s ease forwards";
-			}
+			paths[i].style.animation = "draw .35s ease forwards";
 		}
 	}
 

@@ -75,15 +75,3 @@ svg {
 		stroke-dashoffset: 0;
 	}
 }
-
-@keyframes draw-delayed {
-	0% {stroke-dashoffset: 300}
-	50% {stroke-dashoffset: 300}
-	100% {stroke-dashoffset: 0}
-}
-
-@keyframes crcl {
-	0% {stroke-dashoffset: 450}
-	50% {stroke-dashoffset: 450}
-	100% {stroke-dashoffset: 0}
-}
