@@ -21,10 +21,14 @@ var circleRefs = [];
 
 var players = [MAXI, MINI];
 
-document.addEventListener('click', handleClick);
+boardDiv.addEventListener('click', handleClick);
 document.getElementById("reset").onclick = initGame;
 document.getElementById("crosses").onclick = function() { user = MAXI; initGame();}
 document.getElementById("circles").onclick = function() { user = MINI; initGame();}	
+console.log([reset]);
+console.log([crosses]);
+var circle = document.getElementById("crcl");
+var cross = document.getElementById("cross");
 
 
 /* scan the whole board for any kind of line,
@@ -237,12 +241,7 @@ function init() {
 
 	//populate the board with svgs
 	for(var i = 0; i < dim * dim; i++) {
-		var crossImg = '<img id="cross' + i + 
-		'" src="crosses/cross' + /*(i + 1) + */'.svg" />';
-		var circleImg = '<img id="circle' + i + 
-		'" src="circles/circle' + /*(i + 1) + */'.svg" />'
-		var cell = '<div class="cell" id="' + i + '">' + 
-		crossImg + circleImg + '</div>';
+		var cell = '<div class="cell" id="' + i + '"></div>';
 		board += cell;
 	}
 	boardDiv.innerHTML = board;
@@ -250,17 +249,24 @@ function init() {
 	// get references to cell divs
 	for(var i = 0; i < dim * dim; i++) {
 		var cell = document.getElementById(i);
-		var cross = document.getElementById("cross" + i);
-		var circle = document.getElementById("circle" + i)
+		var circle = document.getElementById("crcl");
+		var cross = document.getElementById("cross");
+		var circleClone = circle.cloneNode(true);
+		var crossClone = cross.cloneNode(true);
+		circleClone.id = "circle" + i;
+		crossClone.id = "cross" + i; 
+		cell.appendChild(circleClone);
+		cell.appendChild(crossClone);
 		divRefs.push(cell);
-		crossRefs.push(cross);
-		circleRefs.push(circle);
+		crossRefs.push(crossClone);
+		circleRefs.push(circleClone);
 	}
 
 	initGame();
 }
 
 function initGame() {
+	console.log("entered initGame")
 	playing = true;
 	terminal = false;
 	cells = [];
@@ -281,16 +287,16 @@ function initGame() {
 	displayBoard(cells);
 }
 
-function handleClick(e, right) {
+function handleClick(e) {
 	if(playing) {
-		var id = parseInt(e.target.id);
+		var id = parseInt(e.target.id.match(/[0-9]+/));
 		if(Number.isInteger(id)) {
 
 			var row = Math.floor(id / dim);
 			var col = id % dim;
 
 			if(cells[row][col] == 0) {
-				markCell(row, col);
+				//markCell(row, col);
 				cells = updateBoard(cells, id, user);
 				cells = nextMove(cells, user * -1);
 				displayBoard(cells);
@@ -313,38 +319,46 @@ function updateBoard(board, id, val) {
 }
 
 function displayBoard(board) {
+
+	function animate(paths) {
+		for(var i = 0; i < paths.length; i++) {
+			if(paths[i].id == "circle") {
+				paths[i].style.animation = "crcl .6s ease forwards";
+			}
+			else{
+				paths[i].style.animation = "draw .35s ease forwards";
+			}
+		}
+	}
+
+	function kill(paths) {
+		for(var i = 0; i < paths.length; i++) {
+			paths[i].style.animation = "";
+		}
+	}
+
 	for(var i = 0; i < board.length; i++) {
 		for(var j = 0; j < board[i].length; j++) {
 			var id = i * dim + j;
-			var cross = crossRefs[id];
-			var circle = circleRefs[id];
-			var val = board[i][j];
-			cross.style.opacity = val;
-			circle.style.opacity = val * -1;
-			// var crossVis, circleVis;
-			// switch(board[i][j]) {
-			// 	case 0:
-			// 		cross.style.opacity = 0;
-			// 		circle.style.opacity = 0;
-			// 		break;
-			// 	case 1:
-			// 		// crossVis = "visible";
-			// 		// circleVis = "hidden";
-			// 		cross.style.opacity = 1;
-			// 		circle.style.opacity = 0;
-			// 		break;
-			// 	case -1: 
-			// 		// crossVis = "hidden";
-			// 		// circleVis = "visible";
-			// 		cross.style.opacity = 0;
-			// 		circle.style.opacity = 1;
-			// 		break;
-			// 	default:
-			// 		console.warn("illegal board value : " + board[i][j]);
-			// 		break;
-			// }
-			// cross.style.visibility = crossVis;
-			// circle.style.visibility = circleVis;
+			var cross = crossRefs[id].getElementsByClassName("slash");
+			var circle = circleRefs[id].getElementsByClassName("circle");
+			switch(board[i][j]) {
+				case 0:
+					kill(cross);
+					kill(circle);
+					break;
+				case 1:
+					animate(cross);
+					kill(circle);
+					break;
+				case -1: 
+					kill(cross);
+					animate(circle);
+					break;
+				default:
+					console.warn("illegal board value : " + board[i][j]);
+					break;
+			}
 		}
 	}
 }

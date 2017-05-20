@@ -9,7 +9,6 @@ body {
 	height: 10.5vw;
 	width: 10.5vw;
 	background-color: #F9F9F9;
-	transition: .5s;
 	position: relative;
 }
 
@@ -21,23 +20,15 @@ body {
 	top: 0; right: 0;
 	left: 0; bottom: 0;
 	clip-path: inset(1vw);
-}       
+} 
 
-img {
-	transition: .5s;
-	position: absolute;
-	margin: 2vw;
-	height: 7vw;
-	width: 7vw;
-	opacity: 0;
-	pointer-events: none;
+#btns {
+	float: right;
 }
-
 .unselectable {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-<<<<<<< HEAD
 }
 
 @media screen and (max-width: 500px) {
@@ -53,30 +44,46 @@ img {
 		width: 45vw;
 		clip-path: inset(2vw);
 	}
-
-	img {
-		height: 10vw;
-		width: 10vw;
+	
+	svg {
+		height: 11vw !important;
+		width: 11vw !important;
+		margin: 1.5vw !important;
 	}
 	
 }
 
-@media screen and (max-width: 500px) {
+.slash {
+	stroke-dasharray: 200;
+	stroke-dashoffset: 200;
+}
 
-	.cell {
-		border: .45vw solid #303030;
-		height: 14vw;
-		width: 14vw;
-	}
+.circle {
+	stroke-dasharray: 450;
+	stroke-dashoffset: 450;
+}
 
-	.board {
-		height: 45vw;
-		width: 45vw;
-		clip-path: inset(2vw);
-	}
+svg {
+	position: absolute;
+	margin: .75vw;
+	height: 9vw;
+	width: 9vw;
+}
 
-	img {
-		height: 10vw;
-		width: 10vw;
+@keyframes draw {
+	to {
+		stroke-dashoffset: 0;
 	}
+}
+
+@keyframes draw-delayed {
+	0% {stroke-dashoffset: 300}
+	50% {stroke-dashoffset: 300}
+	100% {stroke-dashoffset: 0}
+}
+
+@keyframes crcl {
+	0% {stroke-dashoffset: 450}
+	50% {stroke-dashoffset: 450}
+	100% {stroke-dashoffset: 0}
 }
