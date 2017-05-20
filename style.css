@@ -4,10 +4,10 @@ body {
 
 .cell {
 	cursor: pointer;
-	border: .25vw solid #303030;
+	border: .5vw solid #C1C1C1;
 	float: left;
-	height: 10.5vw;
-	width: 10.5vw;
+	height: 10vw;
+	width: 10vw;
 	background-color: #F9F9F9;
 	position: relative;
 }
@@ -19,12 +19,13 @@ body {
 	margin: auto;
 	top: 0; right: 0;
 	left: 0; bottom: 0;
-	clip-path: inset(1vw);
+	clip-path: inset(1.6vw);
 } 
 
 #btns {
 	float: right;
 }
+
 .unselectable {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -34,20 +35,20 @@ body {
 @media screen and (max-width: 500px) {
 
 	.cell {
-		border: .45vw solid #303030;
-		height: 14vw;
-		width: 14vw;
+		border: .7vw solid #ABABAB;
+		height: 13.5vw;
+		width: 13.5vw;
 	}
 
 	.board {
 		height: 45vw;
 		width: 45vw;
-		clip-path: inset(2vw);
+		clip-path: inset(2.5vw);
 	}
 	
 	svg {
-		height: 11vw !important;
-		width: 11vw !important;
+		height: 10vw !important;
+		width: 10vw !important;
 		margin: 1.5vw !important;
 	}
 	
@@ -65,9 +66,9 @@ body {
 
 svg {
 	position: absolute;
-	margin: .75vw;
-	height: 9vw;
-	width: 9vw;
+	margin: 1.6vw;
+	height: 7vw;
+	width: 7vw;
 }
 
 @keyframes draw {
