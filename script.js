@@ -2,6 +2,10 @@ var boardDiv = document.getElementById("board");
 //Board dimension
 const dim = 3;
 
+var iw = window.innerWidth;
+var ow = window.outerWidth;
+var glowRadius = iw / 200;
+
 const HORIZONTAL = 0;
 const VERTICAL = 1;
 const DIAGONAL = 2;
@@ -29,6 +33,34 @@ console.log([reset]);
 console.log([crosses]);
 var circle = document.getElementById("crcl");
 var cross = document.getElementById("cross");
+
+window.onresize = function() { 
+	console.log("onresize")
+	if(ow != window.outerWidth){
+		console.log("ow != window.outerWidth)");
+		iw = window.innerWidth;
+		ow = window.outerWidth;
+		glowRadius = iw / 200;
+	}
+}
+
+var glow = document.getElementById("gl")
+
+glow.onclick = function() {
+	console.log("entered onlick");
+	for(var i = 0; i < circleRefs.length; i++) {
+		circleRefs[i].setAttribute("filter", "url(#glow)");
+	}
+	animateGlow(.1);
+}
+
+var gblur = document.getElementById("gblur");
+function animateGlow(val) {
+	gblur.setAttribute("stdDeviation", val);
+	if(val < glowRadius) {
+		setTimeout(function(){animateGlow(val + .1)}, 10);
+	}
+}
 
 
 /* scan the whole board for any kind of line,
@@ -230,9 +262,8 @@ function printBoard(board) {
 
 function markCell(row, col) {
 	var id = row * dim + col;
-	var img = document.getElementById("cross"+id)
-	//refs[id].style.opacity = 1;
-	img.style.opacity = 1;
+	circleRefs[i].setAttribute("filter", "url(#glow)");
+	crossRefs[i].setAttribute("filter", "url(#glow)");
 }
 
 function init() {

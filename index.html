@@ -1,4 +1,4 @@
-<! DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 	<head>
 		 <meta name="viewport" content="width=device-width, maximum-scale=1">
@@ -6,9 +6,22 @@
 	</head>
 
 	<body oncontextmenu="return false" class="unselectable">
-		
+		<svg>
+			<!-- filter -->
+			<filter id="glow">
+			  <feGaussianBlur id="gblur" in="SourceGraphic" stdDeviation="0" result="blur" />
+			  <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 
+			   0 1 0 0 1  
+			   0 0 1 0 0  
+			   0 0 0 1 0" 
+			   result="glow" />
+			  <feBlend in="SourceGraphic" in2="glow" />
+			</filter>
+		</svg>
+	
 		<!-- cross svg -->
 		<svg id="cross" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+
 			 <g transform="translate(0 -875.2)">
 			  <path id="forward" class="slash" id="path4355" style="stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" d="m20 1032.4 135-135.04"/>
 			 </g>
@@ -17,7 +30,10 @@
 			 </g>
 		</svg>
 
-		<svg id="crcl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+
+		<!--circle -->
+		<svg  id="crcl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+			 
 			 <g  transform="translate(0 -875.2)">
 			  <ellipse class="circle" id="circle" style="stroke-linejoin:round;stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" rx="70.148" ry="70.505" cy="963.43" cx="88.929"/>
 			 </g>
@@ -26,6 +42,7 @@
 		<button id="reset">reset</button>
 		<button id="crosses">crosses</button>
 		<button id="circles">circles</button>
+		<button id="gl">glow</button>
 		</div>
 		<div class="board" id="board"></div>
 		<script type="text/javascript" src="script.js"></script>
