@@ -1,67 +1,45 @@
-var boardDiv = document.getElementById("board");
 //Board dimension
 const dim = 3;
 
+const NT = "nonterminal";
+const TIE = 0;
+const MAXI = 1;
+const MINI = -1;
+const FORWARD = 1;
+const BACKWARD = 0;
+const DIAGONAL = 2;
+const VERTICAL = 1;
+const HORIZONTAL = 0;
+
+var orientation, position, terminal;
 var iw = window.innerWidth;
 var ow = window.outerWidth;
 var glowRadius = iw / 200;
-
-const HORIZONTAL = 0;
-const VERTICAL = 1;
-const DIAGONAL = 2;
-const BACKWARD = 0;
-const FORWARD = 1;
-
-var orientation, position, terminal;
-const NT = "nonterminal";
-const MAXI = 1;
-const MINI = -1;
-const TIE = 0;
 var user = 1;
 var cells = [];
+var marked = [];
 var divRefs = [];
 var crossRefs = [];
 var circleRefs = [];
-
+var circle = document.getElementById("crcl");
+var cross = document.getElementById("cross");
+var gblur = document.getElementById("gblur");
+var boardDiv = document.getElementById("board");
 var players = [MAXI, MINI];
 
 boardDiv.addEventListener('click', handleClick);
 document.getElementById("reset").onclick = initGame;
 document.getElementById("crosses").onclick = function() { user = MAXI; initGame();}
 document.getElementById("circles").onclick = function() { user = MINI; initGame();}	
-console.log([reset]);
-console.log([crosses]);
-var circle = document.getElementById("crcl");
-var cross = document.getElementById("cross");
+
 
 window.onresize = function() { 
-	console.log("onresize")
 	if(ow != window.outerWidth){
-		console.log("ow != window.outerWidth)");
 		iw = window.innerWidth;
 		ow = window.outerWidth;
 		glowRadius = iw / 200;
 	}
 }
-
-var glow = document.getElementById("gl")
-
-glow.onclick = function() {
-	console.log("entered onlick");
-	for(var i = 0; i < circleRefs.length; i++) {
-		circleRefs[i].setAttribute("filter", "url(#glow)");
-	}
-	animateGlow(.1);
-}
-
-var gblur = document.getElementById("gblur");
-function animateGlow(val) {
-	gblur.setAttribute("stdDeviation", val);
-	if(val < glowRadius) {
-		setTimeout(function(){animateGlow(val + .1)}, 10);
-	}
-}
-
 
 /* scan the whole board for any kind of line,
    return the player value if a line is found,
@@ -89,7 +67,7 @@ function checkState(board) {
 		return found;
 	}
 
-	//ckeck for orthogonal lines (vertical or horizontal)
+	//check for orthogonal lines (vertical or horizontal)
 	var checkOrthogonal = function(v, orient) {
 		var found = false;
 		for(var pos = 0; pos < board.length; pos++) {
@@ -147,8 +125,6 @@ function checkState(board) {
 	}
 	return res;
 }
-
-
 
 function getMoves(board, player) {
 	var res = [];
@@ -236,34 +212,54 @@ function nextMove(board, player) {
 }
 
 function displayTerminal(state) {
-	if(state != TIE) {
-
+	//adds glow filter to the targeted cells's svg
+	function markCell(row, col) {
+		var id = row * dim + col;
+		circleRefs[id].setAttribute("filter", "url(#glow)");
+		crossRefs[id].setAttribute("filter", "url(#glow)");
+		marked.push(id);
 	}
-}
 
-function displayOrtho(pos, orient) {
-	for(var i = 0; i < cells.length; i++) {
-		var cell = orient ? 
-		cells[i][pos] :
-		cells[pos][i]
-	}
-}
-
-function printBoard(board) {
-	var res = "";
-	for(var i = 0; i < dim; i++) {
-		for(var j = 0; j < dim; j++) {
-			res += board[i][j] + "\t";
+	function displayOrtho(pos, orient) {
+		for(var i = 0; i < cells.length; i++) {
+			var row = orient ? i : pos;
+			var col = orient ? pos : i;
+			markCell(row, col);
 		}
-		res += "\n"
 	}
-	console.log(res);
+
+	function displayDiag(fwd) {
+		var len = cells.length - 1;
+		for(var i = 0; i <= len; i++) {
+			var col = fwd ? len - i : i;
+			markCell(i, col);
+		}
+	}
+
+	if(state != TIE) {
+		if(orientation == DIAGONAL ) {
+			displayDiag(position);
+		}
+		else{
+			displayOrtho(position, orientation);
+		}
+		animateGlow(.1);
+	}
 }
 
-function markCell(row, col) {
-	var id = row * dim + col;
-	circleRefs[i].setAttribute("filter", "url(#glow)");
-	crossRefs[i].setAttribute("filter", "url(#glow)");
+function animateGlow(val) {
+	gblur.setAttribute("stdDeviation", val);
+	if(val < glowRadius) {
+		setTimeout(function(){animateGlow(val + .1)}, 10);
+	}
+}
+
+function unmarkCells() {
+	for(var i = 0; i < marked.length; i++) {
+		var id = marked[i];
+		circleRefs[id].setAttribute("filter", "");
+		crossRefs[id].setAttribute("filter", "");
+	} 
 }
 
 function init() {
@@ -297,10 +293,10 @@ function init() {
 }
 
 function initGame() {
-	console.log("entered initGame")
 	playing = true;
 	terminal = false;
 	cells = [];
+
 	//populate the initial board
 	for(var i = 0; i < dim; i++) {
 		var row = [];
@@ -314,7 +310,7 @@ function initGame() {
 	if(user == MINI) {
 		cells = nextMove(cells, MAXI);
 	}
-
+	unmarkCells();
 	displayBoard(cells);
 }
 
@@ -327,7 +323,6 @@ function handleClick(e) {
 			var col = id % dim;
 
 			if(cells[row][col] == 0) {
-				//markCell(row, col);
 				cells = updateBoard(cells, id, user);
 				cells = nextMove(cells, user * -1);
 				displayBoard(cells);
@@ -337,6 +332,7 @@ function handleClick(e) {
 			if(terminal) {
 				console.log("TERMINAL");
 				playing = false;
+				displayTerminal();
 			}
 		}
 	}
@@ -389,6 +385,4 @@ function displayBoard(board) {
 	}
 }
 
-
 init();
-//displayBoard(cells);
