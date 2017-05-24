@@ -1,139 +1,182 @@
+@font-face {
+    font-family: "Quicksand";
+    src: url("fonts/Quicksand-Medium.ttf");
+}
+
 body {
-	background-color: #F9F9F9;
+    background-color: #F9F9F9;
+    font-family: "Quicksand";
 }
 
 .cell {
-	cursor: pointer;
-	border: .5vw solid #C1C1C1;
-	float: left;
-	height: 10vw;
-	width: 10vw;
-	background-color: #F9F9F9;
-	position: relative;
+    cursor: pointer;
+    border: .5vw solid #C1C1C1;
+    float: left;
+    height: 10vw;
+    width: 10vw;
+    background-color: #F9F9F9;
+    position: relative;
 }
 
 .board {
-	position: absolute;
-	width: 33vw;
-	height: 33vw;
-	margin: auto;
-	top: 0; right: 0;
-	left: 0; bottom: 0;
-	clip-path: inset(1.6vw);
-} 
+    position: absolute;
+    width: 33vw;
+    height: 33vw;
+    margin: auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    clip-path: inset(1.6vw);
+}
 
 #btns {
-	float: right;
+    position: absolute;
+    bottom: 0;
+    test-align: center;
+    font-size: 3.5vw;
 }
 
 .pnl {
-	font-family: Arial;
-	color: rgba(60, 60, 60, 0);
-	font-size: 600%;
-	padding-top: 20vw;
-	text-align: center;
-	width: 40vw;
-	height: 40vw;
-	margin: auto;
-	position: absolute;
-	top: 0; right: 0;
-	bottom: 0; left: 0;
-	z-index: -2;
+    z-index: -2;
+    width: 40vw;
+    height: 40vw;
+    margin: auto;
+    cursor: pointer;
+    font-size: 30vw;
+    line-height: 10vw;
+    padding-top: 18vw;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    position: absolute;
+    color: rgba(0, 0, 0, 0);
+}
+
+.tie {
+    font-size: 24vw;
+    padding-top: 5vw !important;
+}
+
+.txt {
+    font-size: 8vw;
 }
 
 .show-txt {
-	animation: show-t 1s ease forwards;
+    animation: show-t 2s ease forwards;
 }
 
 @keyframes show-t {
-	to {
-		color: rgba(60, 60, 60, 1);
-	}
+    to {
+        color: rgba(0, 0, 0, 1);
+    }
 }
 
 .blur {
-	animation: blr 1s ease forwards;
+    animation: blr 1s ease forwards;
 }
 
 @keyframes blr {
-	to {
-		filter: blur(1.2vw);
-	}
+    to {
+        filter: blur(1.2vw);
+    }
 }
 
 #blur {
-	width: 40vw;
-	height: 40vw;
-	margin: auto;
-	position: absolute;
-	top: 0; right: 0;
-	bottom: 0; left: 0;
-	z-index: -1;
+    width: 40vw;
+    height: 40vw;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
 }
 
 .select {
-	text-align: center;
-	margin: 1vw;
-	float: right;
-	transition: .5s;
+    text-align: center;
+    margin: 1vw;
+    float: right;
 }
-
 
 .unselectable {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
-@media screen and (max-width: 500px) {
-
-	.cell {
-		border: .7vw solid #ABABAB;
-		height: 13.5vw;
-		width: 13.5vw;
-	}
-
-	.board {
-		height: 45vw;
-		width: 45vw;
-		clip-path: inset(2.5vw);
-	}
-	
-	svg {
-		height: 10vw !important;
-		width: 10vw !important;
-		margin: 1.5vw !important;
-	}
-	
+@media screen and (max-width: 700px) {
+    .cell {
+        border: .7vw solid #ABABAB;
+        height: 13.5vw;
+        width: 13.5vw;
+    }
+    .board {
+        height: 45vw;
+        width: 45vw;
+        clip-path: inset(2.5vw);
+    }
+    svg {
+        height: 10vw !important;
+        width: 10vw !important;
+        margin: 1.5vw !important;
+    }
+    #btns {
+        font-size: 7vw;
+    }
+    .player {
+        position: static !important;
+        height: 8vw !important;
+        width: 8vw !important;
+        margin: .4vw !important;
+    }
+    .pnl {
+        width: 55vw;
+        height: 55vw;
+        font-size: 35vw;
+        line-height: 12vw;
+        padding-top: 30vw;
+        padding-left: 3vw;
+    }
+    .tie {
+        font-size: 30vw;
+        padding-top: 5vw !important;
+    }
+    .txt {
+        font-size: 10vw;
+    }
 }
 
 .slash {
-	stroke-dasharray: 200;
-	stroke-dashoffset: 200;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
 }
 
 .o {
-	stroke-dasharray: 450;
-	stroke-dashoffset: 450;
+    stroke-dasharray: 450;
+    stroke-dashoffset: 450;
 }
 
 svg {
-	position: absolute;
-	margin: 1.6vw;
-	height: 7vw;
-	width: 7vw;
+    position: absolute;
+    margin: 1.6vw;
+    height: 7vw;
+    width: 7vw;
 }
 
-
 .player {
-	position: static !important;
-	height: 4vw !important;
-	width: 4vw !important;
-	margin: 1vw !important;
+    cursor: pointer;
+    position: static;
+    height: 4vw;
+    width: 4vw;
+    margin: .2vw;
 }
 
 @keyframes draw {
-	to {
-		stroke-dashoffset: 0;
-	}
+    to {
+        stroke-dashoffset: 0;
+    }
 }

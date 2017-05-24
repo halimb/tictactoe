@@ -1,66 +1,54 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		 <meta name="viewport" content="width=device-width, maximum-scale=1">
-		<link rel="stylesheet" type="text/css" href="style.css">
-	</head>
 
-	<body  oncontextmenu="return false" class="unselectable">
-			
-		<!-- filter -->
-		<svg>
-			<filter id="glow">
-			  <feGaussianBlur id="gblur" in="SourceGraphic" stdDeviation="5" result="blur" />
-			  <feColorMatrix in="blur" mode="matrix" 
-			  values="
+<head>
+    <meta name="viewport" content="width=device-width, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body oncontextmenu="return false" class="unselectable">
+    <!-- filter -->
+    <svg>
+        <filter id="glow">
+            <feGaussianBlur id="gblur" in="SourceGraphic" stdDeviation="5" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="
 			  1 0 0 0 0
               0 1 0 0 1
               0 0 1 0 0
-              0 0 0 1 0 "
-			   result="glow" />
-			  <feBlend in="SourceGraphic" in2="glow" />
-			</filter>
-		</svg>
-	
-		<div id="btns">
-			<button id="reset">reset</button>
-			Play as: 
-			<div id="xes" class="select">
-
-				<!-- cross svg -->
-				<svg id="x" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
-
-					 <g  transform="translate(0 -875.2)">
-					  <path id="forward" class="slash" id="path4355" style="stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" d="m20 1032.4 135-135.04"/>
-					 </g>
-					 <g>
-					  <path id="backward" class="slash" id="path4355-3" style="stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" d="m155 156.81-135-135"/>
-					 </g>
-				</svg>
-
-			</div>
-
-			<div id="os" class="select">
-
-				<!--circle -->
-				<svg id="crcl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
-					 
-					 <g  transform="translate(0 -875.2)">
-					  <ellipse class="o" id="o" style="stroke-linejoin:round;stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" rx="70.148" ry="70.505" cy="963.43" cx="88.929"/>
-					 </g>
-				</svg>
-
-			</div>
-
-		</div>
-
-		<div id="blur">
-			<div filter="glow" class="board" id="board"></div>
-		</div>
-		<div id="panel" class="pnl">
-			bla bla bla
-		</div>
-		<script type="text/javascript" src="script.js"></script>
-	</body>
+              0 0 0 1 0 " result="glow" />
+            <feBlend in="SourceGraphic" in2="glow" />
+        </filter>
+    </svg>
+    <div id="btns">
+        Play as
+        <br>
+        <div id="xes" class="select">
+            <!-- cross svg -->
+            <svg id="x" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+                <g transform="translate(0 -875.2)">
+                    <path id="forward" class="slash" id="path4355" style="stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" d="m20 1032.4 135-135.04" />
+                </g>
+                <g>
+                    <path id="backward" class="slash" id="path4355-3" style="stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" d="m155 156.81-135-135" />
+                </g>
+            </svg>
+        </div>
+        <div id="os" class="select">
+            <!--circle -->
+            <svg id="crcl" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="50mm" width="50mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 177.16535 177.16535">
+                <g transform="translate(0 -875.2)">
+                    <ellipse class="o" id="o" style="stroke-linejoin:round;stroke:#000;stroke-linecap:round;stroke-width:30;fill:none" rx="70.148" ry="70.505" cy="963.43" cx="88.929" />
+                </g>
+            </svg>
+        </div>
+    </div>
+    <div id="blur">
+        <div filter="glow" class="board" id="board"></div>
+    </div>
+    <div id="panel" class="pnl">
+        bla bla bla
+    </div>
+    <script type="text/javascript" src="script.js"></script>
+</body>
 
 </html>
