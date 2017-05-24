@@ -12,10 +12,10 @@
         <filter id="glow">
             <feGaussianBlur id="gblur" in="SourceGraphic" stdDeviation="5" result="blur" />
             <feColorMatrix in="blur" mode="matrix" values="
-			  1 0 0 0 -.9
-              0 1 0 0 -.8
-              0 0 1 0 -.2
-              0 0 0 10 -2 " result="glow" />
+			  -1 0 0 0 1
+              0 -1 0 0 1
+              0 0 -1 0 1
+              0 0 0 15 -3 " result="glow" />
             <feBlend in="SourceGraphic" in2="glow" />
         </filter>
     </svg>

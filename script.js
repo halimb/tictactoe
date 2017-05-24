@@ -13,7 +13,7 @@ const HORIZONTAL = 0;
 var orientation, position, terminal;
 var iw = window.innerWidth;
 var ow = window.outerWidth;
-var glowRadius = iw > 600 ? iw / 200 : iw / 120;
+var glowRadius = iw > 600 ? iw / 150 : iw / 100;
 var user = 1;
 var cells = [];
 var marked = [];
@@ -62,7 +62,7 @@ window.onresize = function() {
     if (ow != window.outerWidth) {
         iw = window.innerWidth;
         ow = window.outerWidth;
-        glowRadius = iw / 200;
+        glowRadius = iw > 600 ? iw / 150 : iw / 100;
     }
 }
 

@@ -4,17 +4,17 @@
 }
 
 body {
-    background-color: #CDDC39
-
+    background-color: #FF8A65
 
 ;
     font-family: "Quicksand";
-    color: #f0f0f0;
+    color: #ffffff;
 }
 
 .cell {
     cursor: pointer;
-    border: .5vw solid #F0F4C3
+    border: .5vw solid #FFCCBC
+
 
 
 
@@ -25,7 +25,7 @@ body {
     float: left;
     height: 10vw;
     width: 10vw;
-    background-color: #CDDC39
+    background-color: #FF8A65
 
 
 ;
@@ -123,13 +123,13 @@ body {
 }
 
 .slash {
-	stroke: #909009 !important;
+	stroke: #303030 !important;
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
 }
 
 .o {
-	stroke: #606006 !important;
+	stroke: #303030 !important;
     stroke-dasharray: 450;
     stroke-dashoffset: 450;
 }
