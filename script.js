@@ -32,7 +32,6 @@ var players = [MAXI, MINI];
 
 init();
 
-
 boardDiv.onclick = handleClick;
 panel.onclick = undoBlur;
 
@@ -65,6 +64,90 @@ window.onresize = function() {
         glowRadius = iw > 600 ? iw / 150 : iw / 100;
     }
 }
+ 
+//Inflate the board (divs and svgs) and store references
+function init() {
+    var board = '';
+    boardDiv.innerHTML = '';
+
+    //populate the board with svgs
+    for (var i = 0; i < dim * dim; i++) {
+        var cell = '<div class="cell" id="' + i + '"></div>';
+        board += cell;
+    }
+    boardDiv.innerHTML = board;
+
+    // get references to cell divs
+    for (var i = 0; i < dim * dim; i++) {
+        var cell = document.getElementById(i);
+        var oClone = o.cloneNode(true);
+        var xClone = x.cloneNode(true);
+        oClone.id = "o" + i;
+        xClone.id = "x" + i;
+        cell.appendChild(oClone);
+        cell.appendChild(xClone);
+        divRefs.push(cell);
+        xRefs.push(xClone);
+        oRefs.push(oClone);
+    }
+    o.setAttribute("class", "player");
+    x.setAttribute("class", "player");
+    crcl = o.getElementsByClassName("o");
+    crs = x.getElementsByClassName("slash");
+    animate(crcl);
+    animate(crs);
+    glow(x, true);
+    initGame();
+}
+
+//Initialize the game variables and reset the board
+function initGame() {
+    playing = true;
+    terminal = false;
+    cells = [];
+
+    //populate the initial board
+    for (var i = 0; i < dim; i++) {
+        var row = [];
+        for (var j = 0; j < dim; j++) {
+            row.push(0);
+        }
+        cells.push(row);
+    }
+
+    //make the first move if the computer plays xes
+    if (user == MINI) {
+        cells = nextMove(cells, MAXI);
+    }
+    unmarkCells();
+    displayBoard(cells);
+}
+
+// Click handler
+function handleClick(e) {
+    if (playing) {
+        var id = parseInt(e.target.id.match(/[0-9]+/));
+        if (Number.isInteger(id)) {
+
+            var row = Math.floor(id / dim);
+            var col = id % dim;
+
+            if (cells[row][col] == 0) {
+                cells = updateBoard(cells, id, user);
+                cells = nextMove(cells, user * -1);
+                displayBoard(cells);
+            }
+
+            var state = checkState(cells);
+            if (state != NT) {
+                console.log("TERMINAL");
+                playing = false;
+                displayTerminal(state);
+            }
+        }
+    }
+}
+
 
 /* scan the whole board for any kind of line,
    return the player value if a line is found,
@@ -166,6 +249,7 @@ function getMoves(board, player) {
     return res;
 }
 
+
 function minimax(board, player) {
     var state = checkState(board);
     if (state != NT) {
@@ -228,6 +312,7 @@ function nextMove(board, player) {
     return res;
 }
 
+// DISPLAY
 function glow(svg, gl) {
     var attr = gl ? "url(#glow)" : "";
     svg.setAttribute("filter", attr);
@@ -292,7 +377,6 @@ function displayTerminal(state) {
 
 }
 
-
 function animateGlow(radius) {
     anim(.1);
 
@@ -313,87 +397,6 @@ function unmarkCells() {
         var x = xRefs[id]
         glow(x, false);
         glow(o, false);
-    }
-}
-
-function init() {
-    var board = '';
-    boardDiv.innerHTML = '';
-
-    //populate the board with svgs
-    for (var i = 0; i < dim * dim; i++) {
-        var cell = '<div class="cell" id="' + i + '"></div>';
-        board += cell;
-    }
-    boardDiv.innerHTML = board;
-
-
-    // get references to cell divs
-    for (var i = 0; i < dim * dim; i++) {
-        var cell = document.getElementById(i);
-        var oClone = o.cloneNode(true);
-        var xClone = x.cloneNode(true);
-        oClone.id = "o" + i;
-        xClone.id = "x" + i;
-        cell.appendChild(oClone);
-        cell.appendChild(xClone);
-        divRefs.push(cell);
-        xRefs.push(xClone);
-        oRefs.push(oClone);
-    }
-    o.setAttribute("class", "player");
-    x.setAttribute("class", "player");
-    crcl = o.getElementsByClassName("o");
-    crs = x.getElementsByClassName("slash");
-    animate(crcl);
-    animate(crs);
-    glow(x, true);
-    initGame();
-}
-
-function initGame() {
-    playing = true;
-    terminal = false;
-    cells = [];
-
-    //populate the initial board
-    for (var i = 0; i < dim; i++) {
-        var row = [];
-        for (var j = 0; j < dim; j++) {
-            row.push(0);
-        }
-        cells.push(row);
-    }
-
-    //make the first move if the computer plays xes
-    if (user == MINI) {
-        cells = nextMove(cells, MAXI);
-    }
-    unmarkCells();
-    displayBoard(cells);
-}
-
-function handleClick(e) {
-    if (playing) {
-        var id = parseInt(e.target.id.match(/[0-9]+/));
-        if (Number.isInteger(id)) {
-
-            var row = Math.floor(id / dim);
-            var col = id % dim;
-
-            if (cells[row][col] == 0) {
-                cells = updateBoard(cells, id, user);
-                cells = nextMove(cells, user * -1);
-                displayBoard(cells);
-            }
-
-            var state = checkState(cells);
-            if (state != NT) {
-                console.log("TERMINAL");
-                playing = false;
-                displayTerminal(state);
-            }
-        }
     }
 }
 
