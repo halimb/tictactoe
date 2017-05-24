@@ -1,6 +1,5 @@
-//Board dimension
-const dim = 3;
 
+const dim = 3;
 const NT = "nonterminal";
 const TIE = 0;
 const MAXI = 1;
@@ -250,10 +249,10 @@ function displayState(state) {
 }
 
 function undoBlur() {
-    panel.style.zIndex = "-1";
+    panel.style.zIndex = "-10";
     panel.innerHTML = "";
+    blur.className = "";    
     initGame();
-    blur.className = "";
 }
 
 function displayTerminal(state) {
@@ -298,6 +297,7 @@ function animateGlow(radius) {
     anim(.1);
 
     function anim(val) {
+
         gblur.setAttribute("stdDeviation", val);
         if (val < radius) {
             setTimeout(function() { anim(val + .1) }, 10);
