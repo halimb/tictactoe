@@ -52,12 +52,12 @@ body {
 }
 
 .blur {
-	animation: blr .5s ease-in forwards;
+	animation: blr 1s ease forwards;
 }
 
 @keyframes blr {
 	to {
-		filter: blur(1.5vw);
+		filter: blur(1.2vw);
 	}
 }
 
