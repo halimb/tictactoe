@@ -19,18 +19,42 @@ var user = 1;
 var cells = [];
 var marked = [];
 var divRefs = [];
-var crossRefs = [];
-var circleRefs = [];
-var circle = document.getElementById("crcl");
-var cross = document.getElementById("cross");
+var xRefs = [];
+var oRefs = [];
+var o = document.getElementById("crcl");
+var x = document.getElementById("x");
 var gblur = document.getElementById("gblur");
 var boardDiv = document.getElementById("board");
+var xes = document.getElementById("xes");
+var os = document.getElementById("os");
+var reset = document.getElementById("reset");
+var panel = document.getElementById("panel");
 var players = [MAXI, MINI];
 
-boardDiv.addEventListener('click', handleClick);
-document.getElementById("reset").onclick = initGame;
-document.getElementById("crosses").onclick = function() { user = MAXI; initGame();}
-document.getElementById("circles").onclick = function() { user = MINI; initGame();}	
+init();
+
+boardDiv.onclick = handleClick;
+reset.onclick = initGame;
+
+xes.onclick = function() { 
+		if(user != MAXI) {
+			user = MAXI; 
+			initGame(); 
+			glow(x, true);
+			glow(o, false);
+			animateGlow(glowRadius / 3);
+		}
+	}
+
+os.onclick = function() {
+		if(user != MINI) {
+			 user = MINI; 
+			 initGame();
+			 glow(x, false);
+			 glow(o, true);
+			 animateGlow(glowRadius / 3);
+		}
+	}
 
 
 window.onresize = function() { 
@@ -203,20 +227,38 @@ function nextMove(board, player) {
 	else {
 		res = board;
 	}
-
 	if(checkState(res) != NT) {
 		terminal = true;
 	}
-
 	return res; 
+}
+
+function glow(svg, gl) {
+	var attr = gl ? "url(#glow)" : "";
+	svg.setAttribute("filter", attr);
+}
+
+function displayState(state) {
+	if(state != TIE) {
+		var winner = state == 1 ? "crosses" : "circles"
+		var message = winner + "<br>win !";
+	}
+	else {
+		var message = "TIE";
+	}
+	panel.innerHTML = message
+	panel.style.zIndex = 2;
+	panel.className = "pnl show-txt"
+	document.getElementById("blur").className = "blur";
+	document.getElementById("blur").style.zIndex = 1;
 }
 
 function displayTerminal(state) {
 	//adds glow filter to the targeted cells's svg
 	function markCell(row, col) {
 		var id = row * dim + col;
-		circleRefs[id].setAttribute("filter", "url(#glow)");
-		crossRefs[id].setAttribute("filter", "url(#glow)");
+		glow(oRefs[id], true);
+		glow(xRefs[id], true);
 		marked.push(id);
 	}
 
@@ -243,22 +285,37 @@ function displayTerminal(state) {
 		else{
 			displayOrtho(position, orientation);
 		}
-		animateGlow(.1);
+		animateGlow(glowRadius);
 	}
+	setTimeout(function(){displayState(state);}, 1000)
+	
 }
 
-function animateGlow(val) {
-	gblur.setAttribute("stdDeviation", val);
-	if(val < glowRadius) {
-		setTimeout(function(){animateGlow(val + .1)}, 10);
+panel.onclick = function() {
+	panel.style.zIndex = "-1";
+	panel.innerHTML = "";
+	initGame();
+	document.getElementById("blur").className = "";
+}
+
+function animateGlow(radius) {
+	anim(.1);
+	function anim(val) {
+		gblur.setAttribute("stdDeviation", val);
+		if(val < radius) {
+			setTimeout(function(){anim(val + .1)}, 10);
+		}
 	}
+	
 }
 
 function unmarkCells() {
 	for(var i = 0; i < marked.length; i++) {
 		var id = marked[i];
-		circleRefs[id].setAttribute("filter", "");
-		crossRefs[id].setAttribute("filter", "");
+		var o = oRefs[id];
+		var x = xRefs[id]
+		glow(x, false);
+		glow(o, false);
 	} 
 }
 
@@ -273,21 +330,26 @@ function init() {
 	}
 	boardDiv.innerHTML = board;
 
+
 	// get references to cell divs
 	for(var i = 0; i < dim * dim; i++) {
 		var cell = document.getElementById(i);
-		var circle = document.getElementById("crcl");
-		var cross = document.getElementById("cross");
-		var circleClone = circle.cloneNode(true);
-		var crossClone = cross.cloneNode(true);
-		circleClone.id = "circle" + i;
-		crossClone.id = "cross" + i; 
-		cell.appendChild(circleClone);
-		cell.appendChild(crossClone);
+		var oClone = o.cloneNode(true);
+		var xClone = x.cloneNode(true);
+		oClone.id = "o" + i;
+		xClone.id = "x" + i; 
+		cell.appendChild(oClone);
+		cell.appendChild(xClone);
 		divRefs.push(cell);
-		crossRefs.push(crossClone);
-		circleRefs.push(circleClone);
+		xRefs.push(xClone);
+		oRefs.push(oClone);
 	}
+	o.setAttribute("class", "player");
+	x.setAttribute("class", "player");
+	crcl =  o.getElementsByClassName("o");
+	crs = x.getElementsByClassName("slash");
+	animate(crcl);
+	animate(crs);
 
 	initGame();
 }
@@ -306,8 +368,9 @@ function initGame() {
 		cells.push(row);
 	}
 
-	//make the first move if the computer plays crosses
+	//make the first move if the computer plays xes
 	if(user == MINI) {
+		console.log("YO")
 		cells = nextMove(cells, MAXI);
 	}
 	unmarkCells();
@@ -329,10 +392,10 @@ function handleClick(e) {
 			}
 
 			var state = checkState(cells);
-			if(terminal) {
+			if(state != NT) {
 				console.log("TERMINAL");
 				playing = false;
-				displayTerminal();
+				displayTerminal(state);
 			}
 		}
 	}
@@ -345,37 +408,37 @@ function updateBoard(board, id, val) {
 	return board;
 }
 
+function animate(paths) {
+	for(var i = 0; i < paths.length; i++) {
+		paths[i].style.animation = "draw .35s ease forwards";
+	}
+}
+
+function kill(paths) {
+	for(var i = 0; i < paths.length; i++) {
+		paths[i].style.animation = "";
+	}
+}
+
 function displayBoard(board) {
-
-	function animate(paths) {
-		for(var i = 0; i < paths.length; i++) {
-			paths[i].style.animation = "draw .35s ease forwards";
-		}
-	}
-
-	function kill(paths) {
-		for(var i = 0; i < paths.length; i++) {
-			paths[i].style.animation = "";
-		}
-	}
 
 	for(var i = 0; i < board.length; i++) {
 		for(var j = 0; j < board[i].length; j++) {
 			var id = i * dim + j;
-			var cross = crossRefs[id].getElementsByClassName("slash");
-			var circle = circleRefs[id].getElementsByClassName("circle");
+			var x = xRefs[id].getElementsByClassName("slash");
+			var o = oRefs[id].getElementsByClassName("o");
 			switch(board[i][j]) {
 				case 0:
-					kill(cross);
-					kill(circle);
+					kill(x);
+					kill(o);
 					break;
 				case 1:
-					animate(cross);
-					kill(circle);
+					animate(x);
+					kill(o);
 					break;
 				case -1: 
-					kill(cross);
-					animate(circle);
+					kill(x);
+					animate(o);
 					break;
 				default:
 					console.warn("illegal board value : " + board[i][j]);
@@ -384,5 +447,3 @@ function displayBoard(board) {
 		}
 	}
 }
-
-init();

@@ -26,6 +26,59 @@ body {
 	float: right;
 }
 
+.pnl {
+	font-family: Arial;
+	color: rgba(60, 60, 60, 0);
+	font-size: 600%;
+	padding-top: 20vw;
+	text-align: center;
+	width: 40vw;
+	height: 40vw;
+	margin: auto;
+	position: absolute;
+	top: 0; right: 0;
+	bottom: 0; left: 0;
+	z-index: -2;
+}
+
+.show-txt {
+	animation: show-t 1s ease forwards;
+}
+
+@keyframes show-t {
+	to {
+		color: rgba(60, 60, 60, 1);
+	}
+}
+
+.blur {
+	animation: blr .5s ease-in forwards;
+}
+
+@keyframes blr {
+	to {
+		filter: blur(1.5vw);
+	}
+}
+
+#blur {
+	width: 40vw;
+	height: 40vw;
+	margin: auto;
+	position: absolute;
+	top: 0; right: 0;
+	bottom: 0; left: 0;
+	z-index: -1;
+}
+
+.select {
+	text-align: center;
+	margin: 1vw;
+	float: right;
+	transition: .5s;
+}
+
+
 .unselectable {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -59,7 +112,7 @@ body {
 	stroke-dashoffset: 200;
 }
 
-.circle {
+.o {
 	stroke-dasharray: 450;
 	stroke-dashoffset: 450;
 }
@@ -69,6 +122,14 @@ svg {
 	margin: 1.6vw;
 	height: 7vw;
 	width: 7vw;
+}
+
+
+.player {
+	position: static !important;
+	height: 4vw !important;
+	width: 4vw !important;
+	margin: 1vw !important;
 }
 
 @keyframes draw {
