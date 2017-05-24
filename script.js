@@ -300,7 +300,7 @@ function animateGlow(radius) {
 
         gblur.setAttribute("stdDeviation", val);
         if (val < radius) {
-            setTimeout(function() { anim(val + .1) }, 10);
+            setTimeout(function() { anim(val + .2) }, 10);
         }
     }
 

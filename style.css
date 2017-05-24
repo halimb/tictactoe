@@ -4,18 +4,31 @@
 }
 
 body {
-    background-color: #ff7043 ;
+    background-color: #CDDC39
+
+
+;
     font-family: "Quicksand";
-    color: #ffffff;
+    color: #f0f0f0;
 }
 
 .cell {
     cursor: pointer;
-    border: .5vw solid #ffccbc ;
+    border: .5vw solid #F0F4C3
+
+
+
+
+
+
+;
     float: left;
     height: 10vw;
     width: 10vw;
-    background-color:#ff7043 ;
+    background-color: #CDDC39
+
+
+;
     position: relative;
 }
 
@@ -110,13 +123,13 @@ body {
 }
 
 .slash {
-	stroke: #ffffff !important;
+	stroke: #909009 !important;
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
 }
 
 .o {
-	stroke: #ffffff !important;
+	stroke: #606006 !important;
     stroke-dasharray: 450;
     stroke-dashoffset: 450;
 }
