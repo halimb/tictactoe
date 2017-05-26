@@ -28,7 +28,8 @@ body {
     height: 33vw;
     margin: auto;
     position: absolute;
-    clip-path: inset(1.6vw);
+    -webkit-clip-path: inset(1.6vw);
+            clip-path: inset(1.6vw);
 }
 
 #btns {
@@ -66,22 +67,38 @@ body {
 }
 
 .show-txt {
-    animation: show-t 2s ease forwards;
+    -webkit-animation: show-t 2s ease forwards;
+            animation: show-t 2s ease forwards;
+}
+
+@-webkit-keyframes show-t {
+    to {
+         color: rgba(255, 255, 255, 1);
+    }
 }
 
 @keyframes show-t {
     to {
-   		 color: rgba(255, 255, 255, 1);
+         color: rgba(255, 255, 255, 1);
     }
 }
 
 .blur {
-    animation: blr 1s ease forwards;
+    -webkit-animation: blr 1s ease forwards;
+            animation: blr 1s ease forwards;
+}
+
+@-webkit-keyframes blr {
+    to {
+        -webkit-filter: blur(1.2vw);
+                filter: blur(1.2vw);
+    }
 }
 
 @keyframes blr {
     to {
-        filter: blur(1.2vw);
+        -webkit-filter: blur(1.2vw);
+                filter: blur(1.2vw);
     }
 }
 
@@ -110,13 +127,13 @@ body {
 }
 
 .slash {
-	stroke: #303030 !important;
+    stroke: #303030 !important;
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
 }
 
 .o {
-	stroke: #303030 !important;
+    stroke: #303030 !important;
     stroke-dasharray: 450;
     stroke-dashoffset: 450;
 }
@@ -136,6 +153,12 @@ svg {
     margin: .2vw;
 }
 
+@-webkit-keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
 @keyframes draw {
     to {
         stroke-dashoffset: 0;
@@ -151,7 +174,8 @@ svg {
     .board {
         height: 45vw;
         width: 45vw;
-        clip-path: inset(2.5vw);
+        -webkit-clip-path: inset(2.5vw);
+                clip-path: inset(2.5vw);
     }
     svg {
         height: 10vw !important;
