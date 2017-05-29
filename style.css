@@ -7,6 +7,10 @@ body {
     background-color: #FF8A65;
     font-family: "Quicksand";
     color: #ffffff;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
 }
 
 .cell {
